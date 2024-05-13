@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocis-deployment
+  labels:
+    app: ocis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ocis
+  template:
+    metadata:
+      labels:
+        app: ocis
+    spec:
+      containers:
+        - name: ocis
+          image: owncloud/ocis:latest
+          ports:
+            - containerPort: 9200
+          env:
+            - name: OCIS_URL
+              value: "https://localhost:9200"
+            - name: OCIS_LOG_LEVEL
+              value: "debug"
+            - name: OCIS_LOG_PRETTY
+              value: "true"
+            - name: OCIS_LOG_COLOR
+              value: "true"
+            - name: OCIS_INSECURE
+              value: "true"
+            - name: IDM_ADMIN_PASSWORD
+              value: "admin"
+            - name: OCIS_ADMIN_USER_ID
+              value: "some-admin-user-id-0000-000000000000"
+            - name: OCIS_SYSTEM_USER_ID
+              value: "some-system-user-id-000-000000000000"
+            - name: OCIS_SYSTEM_USER_API_KEY
+              value: "some-system-user-machine-auth-api-key"
+            - name: OCIS_JWT_SECRET
+              value: "some-ocis-jwt-secret"
+            - name: OCIS_MACHINE_AUTH_API_KEY
+              value: "some-ocis-machine-auth-api-key"
+            - name: OCIS_TRANSFER_SECRET
+              value: "some-ocis-transfer-secret"
+            - name: IDM_SVC_PASSWORD
+              value: "some-ldap-idm-password"
+            - name: GRAPH_LDAP_BIND_PASSWORD
+              value: "some-ldap-idm-password"
+            - name: IDM_REVASVC_PASSWORD
+              value: "some-ldap-reva-password"
+            - name: GROUPS_LDAP_BIND_PASSWORD
+              value: "some-ldap-reva-password"
+            - name: USERS_LDAP_BIND_PASSWORD
+              value: "some-ldap-reva-password"
+            - name: AUTH_BASIC_LDAP_BIND_PASSWORD
+              value: "some-ldap-reva-password"
+            - name: IDM_IDPSVC_PASSWORD
+              value: "some-ldap-idp-password"
+            - name: IDP_LDAP_BIND_PASSWORD
+              value: "some-ldap-idp-password"
+            - name: GATEWAY_STORAGE_USERS_MOUNT_ID
+              value: "storage-users-1"
+            - name: STORAGE_USERS_MOUNT_ID
+              value: "storage-users-1"
+            - name: GRAPH_APPLICATION_ID
+              value: "application-1"
+            - name: OCIS_SERVICE_ACCOUNT_ID
+              value: "service-account-id"
+            - name: OCIS_SERVICE_ACCOUNT_SECRET
+              value: "service-account-secret"
+
+          command: ["ocis", "server"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ocis-service
+spec:
+  type: NodePort
+  selector:
+    app: ocis
+  ports:
+    - protocol: TCP
+      port: 9200
+      targetPort: 9200
+      nodePort: 30100
