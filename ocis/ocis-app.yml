@@ -71,6 +71,12 @@ spec:
             - name: OCIS_SERVICE_ACCOUNT_SECRET
               value: "service-account-secret"
 
+              # TIKA Service
+            - name: SEARCH_EXTRACTOR_TYPE
+              value: "tika"
+            - name: SEARCH_EXTRACTOR_TIKA_TIKA_URL
+              value: "http://tika-service:9998"
+
           command: ["ocis", "server"]
 ---
 apiVersion: v1
